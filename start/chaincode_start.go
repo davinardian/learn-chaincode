@@ -17,11 +17,11 @@ limitations under the License.
 package main
 
 import (
-
-	"strconv"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
+	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
@@ -36,6 +36,17 @@ type User struct {
 	Balance  int    `json:"balance"`
 }
 
+type TransactionInfo struct {
+	Id               string `json:"id"`
+	LastModifiedDate string `json:"lastModifiedDate"`
+	Amount           int    `json:"amount"`
+	UserInfoA        User   `json:"userInfoA"`
+	UserInfoB        User   `json:"userInfoB"`
+	Status           string `json:"status"`
+}
+
+var tanggalFormat string
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -44,6 +55,9 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error starting Simple chaincode: %s", err)
 	}
+
+	t := time.Now()
+	tanggalFormat = t.Format("2006_01_02_150405")
 }
 
 // Init resets all the things
@@ -233,8 +247,8 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	var X int // Transaction value
 	var err error
 
-	if len(args) != 3 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 3")
+	if len(args) != 4 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 4")
 	}
 
 	// Get the state from the ledger
@@ -289,6 +303,36 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	}
 
 	err = stub.PutState(userB.Name, b)
+	if err != nil {
+		return nil, err
+	}
+
+	var newTransactionInfo TransactionInfo
+
+	Cvalbytes, err := stub.GetState(args[3])
+	if err != nil {
+		return nil, errors.New("Failed to get state")
+	}
+
+	err = json.Unmarshal(Cvalbytes, &newTransactionInfo)
+	if err != nil {
+		return nil, errors.New("Failed to marshal string to struct of newTransactionInfo")
+	}
+
+	newTransactionInfo.Id = args[3]
+	newTransactionInfo.LastModifiedDate = tanggalFormat
+	newTransactionInfo.Amount = X
+	newTransactionInfo.UserInfoA = userA
+	newTransactionInfo.UserInfoB = userB
+	newTransactionInfo.Status = "success"
+
+	b, err = json.Marshal(newTransactionInfo)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Errors while creating json string for newTransactionInfo")
+	}
+
+	err = stub.PutState(newTransactionInfo.Id, b)
 	if err != nil {
 		return nil, err
 	}
