@@ -333,8 +333,8 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 		panic(err)
 	}
 
-	newTransactionInfo.UserInfoA = userA_unmarshal
-	newTransactionInfo.UserInfoB = userB_unmarshal
+	newTransactionInfo.UserInfoA = userA
+	newTransactionInfo.UserInfoB = userB
 	newTransactionInfo.Status = "success"
 
 	//	err = json.Unmarshal(Cvalbytes, &newTransactionInfo)
