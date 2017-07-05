@@ -61,6 +61,66 @@ func main() {
 
 // Init resets all the things
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	if len(args) != 6 {
+		return nil, errors.New("Incorrect number of arguments. Execting 6")
+	}
+
+	var usersArray []string
+
+	var userone User
+	userone.Name = args[0]
+	userone.Password = args[1]
+	balance, err := strconv.Atoi(args[2])
+	if err != nil {
+		return nil, errors.New("Expecting integer value for asset holding at 3 place")
+	}
+
+	userone.Balance = balance
+
+	b, err := json.Marshal(userone)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Errors while creating json string for userone")
+	}
+
+	err = stub.PutState(args[0], b)
+	if err != nil {
+		return nil, err
+	}
+
+	userone.Name = args[3]
+	userone.Password = args[4]
+	balance, err = strconv.Atoi(args[5])
+	if err != nil {
+		return nil, errors.New("Expecting integer value for asset holding at 3 place")
+	}
+
+	userone.Balance = balance
+
+	b, err = json.Marshal(userone)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Errors while creating json string for userone")
+	}
+
+	err = stub.PutState(args[3], b)
+	if err != nil {
+		return nil, err
+	}
+
+	usersArray = append(usersArray, args[0])
+	usersArray = append(usersArray, args[3])
+
+	b, err = json.Marshal(usersArray)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Errors while creating json string for usertwo")
+	}
+
+	err = stub.PutState("users", b)
+	if err != nil {
+		return nil, err
+	}
 
 	return nil, nil
 }
