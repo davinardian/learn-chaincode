@@ -313,11 +313,6 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 		return nil, errors.New("Failed to get state")
 	}
 
-	err = json.Unmarshal(Cvalbytes, &newTransactionInfo)
-	if err != nil {
-		return nil, errors.New("Failed to marshal string to struct of newTransactionInfo")
-	}
-
 	newTransactionInfo.Id = args[3]
 	newTransactionInfo.Amount = X
 
@@ -341,6 +336,11 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	newTransactionInfo.UserInfoA = userA_unmarshal
 	newTransactionInfo.UserInfoB = userB_unmarshal
 	newTransactionInfo.Status = "success"
+
+	err = json.Unmarshal(Cvalbytes, &newTransactionInfo)
+	if err != nil {
+		return nil, errors.New("Failed to marshal string to struct of newTransactionInfo")
+	}
 
 	b, err = json.Marshal(newTransactionInfo)
 	if err != nil {
