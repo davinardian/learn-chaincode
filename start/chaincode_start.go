@@ -186,8 +186,8 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	var X int // Transaction value
 	var err error
 
-	if len(args) != 4 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 4")
+	if len(args) != 6 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 6")
 	}
 
 	// Get the state from the ledger
@@ -260,8 +260,8 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 
 	newTransactionInfo.Id = args[3]
 	newTransactionInfo.Amount = X
-	newTransactionInfo.UserInfoA = userA
-	newTransactionInfo.UserInfoB = userB
+	newTransactionInfo.UserInfoA = args[4]
+	newTransactionInfo.UserInfoB = args[5]
 	newTransactionInfo.Status = "success"
 
 	b, err = json.Marshal(newTransactionInfo)
