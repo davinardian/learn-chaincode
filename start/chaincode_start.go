@@ -261,8 +261,8 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	newTransactionInfo.Id = args[3]
 	newTransactionInfo.Amount = X
 
-	s1 := `{ "User": { "Name": "davin" , "Password": "password" , "Balance": 100 } }`
-	s2 := `{ "User": { "Name": "ardian" , "Password": "password" , "Balance": 200 } }`
+	s1 := `{ "Name": "davin" , "Password": "password" , "Balance": 100 }`
+	s2 := `{ "Name": "ardian" , "Password": "password" , "Balance": 200 }`
 	bytes1 := []byte(s1)
 	bytes2 := []byte(s2)
 
