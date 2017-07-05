@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"strconv"
 	"time"
 
@@ -308,10 +309,10 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 
 	var newTransactionInfo TransactionInfo
 
-	Cvalbytes, err := stub.GetState(args[3])
-	if err != nil {
-		return nil, errors.New("Failed to get state")
-	}
+	//	Cvalbytes, err := stub.GetState(args[3])
+	//	if err != nil {
+	//		return nil, errors.New("Failed to get state")
+	//	}
 
 	newTransactionInfo.Id = args[3]
 	newTransactionInfo.Amount = X
@@ -337,10 +338,10 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	newTransactionInfo.UserInfoB = userB_unmarshal
 	newTransactionInfo.Status = "success"
 
-	err = json.Unmarshal(Cvalbytes, &newTransactionInfo)
-	if err != nil {
-		return nil, errors.New("Failed to marshal string to struct of newTransactionInfo")
-	}
+	//	err = json.Unmarshal(Cvalbytes, &newTransactionInfo)
+	//	if err != nil {
+	//		return nil, errors.New("Failed to marshal string to struct of newTransactionInfo")
+	//	}
 
 	b, err = json.Marshal(newTransactionInfo)
 	if err != nil {
