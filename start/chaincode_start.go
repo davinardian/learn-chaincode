@@ -37,11 +37,13 @@ type Participant struct {
 }
 
 type TransactionInfo struct {
-	Id               string      `json:"id"`
-	Amount           int         `json:"amount"`
-	ParticipantInfoA Participant `json:"participantInfoA"`
-	ParticipantInfoB Participant `json:"participantInfoB"`
-	Status           string      `json:"status"`
+	TransactionInfoId string      `json:"transactionInfoId"`
+	TransactionId     string      `json:"transactionId"`
+	Amount            int         `json:"amount"`
+	ParticipantInfoA  Participant `json:"participantInfoA"`
+	ParticipantInfoB  Participant `json:"participantInfoB"`
+	Status            string      `json:"status"`
+	Description       string      `json:"description"`
 }
 
 var tanggalFormat string
@@ -61,108 +63,108 @@ func main() {
 
 // Init resets all the things
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	if len(args) != 12 {
-		return nil, errors.New("Incorrect number of arguments. Execting 6")
-	}
-
-	var participantsArray []string
-
-	var participantone Participant
-	participantone.Name = args[0]
-	participantone.Password = args[1]
-	balance, err := strconv.Atoi(args[2])
-	if err != nil {
-		return nil, errors.New("Expecting integer value for asset holding at 3 place")
-	}
-
-	participantone.Balance = balance
-
-	b, err := json.Marshal(participantone)
-	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for participantone")
-	}
-
-	err = stub.PutState(args[0], b)
-	if err != nil {
-		return nil, err
-	}
-
-	participantone.Name = args[3]
-	participantone.Password = args[4]
-	balance, err = strconv.Atoi(args[5])
-	if err != nil {
-		return nil, errors.New("Expecting integer value for asset holding at 3 place")
-	}
-
-	participantone.Balance = balance
-
-	b, err = json.Marshal(participantone)
-	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for participantone")
-	}
-
-	err = stub.PutState(args[3], b)
-	if err != nil {
-		return nil, err
-	}
-
-	participantone.Name = args[6]
-	participantone.Password = args[7]
-	balance, err = strconv.Atoi(args[8])
-	if err != nil {
-		return nil, errors.New("Expecting integer value for asset holding at 3 place")
-	}
-
-	participantone.Balance = balance
-
-	b, err = json.Marshal(participantone)
-	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for participantone")
-	}
-
-	err = stub.PutState(args[6], b)
-	if err != nil {
-		return nil, err
-	}
-
-	participantone.Name = args[9]
-	participantone.Password = args[10]
-	balance, err = strconv.Atoi(args[11])
-	if err != nil {
-		return nil, errors.New("Expecting integer value for asset holding at 3 place")
-	}
-
-	participantone.Balance = balance
-
-	b, err = json.Marshal(participantone)
-	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for participantone")
-	}
-
-	err = stub.PutState(args[9], b)
-	if err != nil {
-		return nil, err
-	}
-
-	participantsArray = append(participantsArray, args[0])
-	participantsArray = append(participantsArray, args[3])
-	participantsArray = append(participantsArray, args[6])
-	participantsArray = append(participantsArray, args[9])
-
-	b, err = json.Marshal(participantsArray)
-	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for participanttwo")
-	}
-
-	err = stub.PutState("participants", b)
-	if err != nil {
-		return nil, err
-	}
+	//	if len(args) != 12 {
+	//		return nil, errors.New("Incorrect number of arguments. Execting 6")
+	//	}
+	//
+	//	var participantsArray []string
+	//
+	//	var participantone Participant
+	//	participantone.Name = args[0]
+	//	participantone.Password = args[1]
+	//	balance, err := strconv.Atoi(args[2])
+	//	if err != nil {
+	//		return nil, errors.New("Expecting integer value for asset holding at 3 place")
+	//	}
+	//
+	//	participantone.Balance = balance
+	//
+	//	b, err := json.Marshal(participantone)
+	//	if err != nil {
+	//		fmt.Println(err)
+	//		return nil, errors.New("Errors while creating json string for participantone")
+	//	}
+	//
+	//	err = stub.PutState(args[0], b)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	participantone.Name = args[3]
+	//	participantone.Password = args[4]
+	//	balance, err = strconv.Atoi(args[5])
+	//	if err != nil {
+	//		return nil, errors.New("Expecting integer value for asset holding at 3 place")
+	//	}
+	//
+	//	participantone.Balance = balance
+	//
+	//	b, err = json.Marshal(participantone)
+	//	if err != nil {
+	//		fmt.Println(err)
+	//		return nil, errors.New("Errors while creating json string for participantone")
+	//	}
+	//
+	//	err = stub.PutState(args[3], b)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	participantone.Name = args[6]
+	//	participantone.Password = args[7]
+	//	balance, err = strconv.Atoi(args[8])
+	//	if err != nil {
+	//		return nil, errors.New("Expecting integer value for asset holding at 3 place")
+	//	}
+	//
+	//	participantone.Balance = balance
+	//
+	//	b, err = json.Marshal(participantone)
+	//	if err != nil {
+	//		fmt.Println(err)
+	//		return nil, errors.New("Errors while creating json string for participantone")
+	//	}
+	//
+	//	err = stub.PutState(args[6], b)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	participantone.Name = args[9]
+	//	participantone.Password = args[10]
+	//	balance, err = strconv.Atoi(args[11])
+	//	if err != nil {
+	//		return nil, errors.New("Expecting integer value for asset holding at 3 place")
+	//	}
+	//
+	//	participantone.Balance = balance
+	//
+	//	b, err = json.Marshal(participantone)
+	//	if err != nil {
+	//		fmt.Println(err)
+	//		return nil, errors.New("Errors while creating json string for participantone")
+	//	}
+	//
+	//	err = stub.PutState(args[9], b)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	participantsArray = append(participantsArray, args[0])
+	//	participantsArray = append(participantsArray, args[3])
+	//	participantsArray = append(participantsArray, args[6])
+	//	participantsArray = append(participantsArray, args[9])
+	//
+	//	b, err = json.Marshal(participantsArray)
+	//	if err != nil {
+	//		fmt.Println(err)
+	//		return nil, errors.New("Errors while creating json string for participanttwo")
+	//	}
+	//
+	//	err = stub.PutState("participants", b)
+	//	if err != nil {
+	//		return nil, err
+	//	}
 
 	return nil, nil
 }
@@ -290,13 +292,13 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	var X int // Transaction value
 	var err error
 
-	if len(args) != 4 {
+	if len(args) != 7 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 4")
 	}
 
 	// Get the state from the ledger
 	// TODO: will be nice to have a GetAllState call to ledger
-	Avalbytes, err := stub.GetState(args[0])
+	Avalbytes, err := stub.GetState(args[2])
 	if err != nil {
 		return nil, errors.New("Failed to get state")
 	}
@@ -306,7 +308,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 		return nil, errors.New("Failed to marshal string to struct of participantA")
 	}
 
-	Bvalbytes, err := stub.GetState(args[1])
+	Bvalbytes, err := stub.GetState(args[3])
 	if err != nil {
 		return nil, errors.New("Failed to get state")
 	}
@@ -357,9 +359,6 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	//		return nil, errors.New("Failed to get state")
 	//	}
 
-	newTransactionInfo.Id = args[3]
-	newTransactionInfo.Amount = X
-
 	/*s1 := `{ "Name": "davin" , "Password": "password" , "Balance": 100 }`
 	s2 := `{ "Name": "ardian" , "Password": "password" , "Balance": 200 }`
 	bytes1 := []byte(s1)
@@ -377,9 +376,13 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 		panic(err)
 	}*/
 
+	newTransactionInfo.TransactionInfoId = args[0]
+	newTransactionInfo.TransactionId = args[1]
+	newTransactionInfo.Amount = X
 	newTransactionInfo.ParticipantInfoA = participantA
 	newTransactionInfo.ParticipantInfoB = participantB
-	newTransactionInfo.Status = "success"
+	newTransactionInfo.Status = args[4]
+	newTransactionInfo.Description = args[5]
 
 	//	err = json.Unmarshal(Cvalbytes, &newTransactionInfo)
 	//	if err != nil {
@@ -405,13 +408,13 @@ func (t *SimpleChaincode) InitTransaction(stub shim.ChaincodeStubInterface, args
 	var X int = 0 // Transaction value
 	var err error
 
-	if len(args) != 2 {
+	if len(args) != 5 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 4")
 	}
 
 	// Get the state from the ledger
 	// TODO: will be nice to have a GetAllState call to ledger
-	Avalbytes, err := stub.GetState(args[0])
+	Avalbytes, err := stub.GetState(args[2])
 	if err != nil {
 		return nil, errors.New("Failed to get state")
 	}
@@ -438,11 +441,13 @@ func (t *SimpleChaincode) InitTransaction(stub shim.ChaincodeStubInterface, args
 	var participantB Participant
 	var newTransactionInfo TransactionInfo
 
-	newTransactionInfo.Id = args[1]
+	newTransactionInfo.TransactionInfoId = args[0]
+	newTransactionInfo.TransactionId = args[1]
 	newTransactionInfo.Amount = X
 	newTransactionInfo.ParticipantInfoA = participantA
 	newTransactionInfo.ParticipantInfoB = participantB
-	newTransactionInfo.Status = "initialize"
+	newTransactionInfo.Status = args[3]
+	newTransactionInfo.Description = args[4]
 
 	b, err = json.Marshal(newTransactionInfo)
 	if err != nil {
