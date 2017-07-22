@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 	"strconv"
 	"time"
 
@@ -439,8 +440,9 @@ func (t *SimpleChaincode) InitTransaction(stub shim.ChaincodeStubInterface, args
 	}
 
 	var participantB Participant
-	var newTransactionInfo TransactionInfo
 
+	var oldTransactionInfo TransactionInfo
+	var newTransactionInfo TransactionInfo
 	newTransactionInfo.TransactionInfoId = args[0]
 	newTransactionInfo.TransactionId = args[1]
 	newTransactionInfo.Amount = X
@@ -449,16 +451,49 @@ func (t *SimpleChaincode) InitTransaction(stub shim.ChaincodeStubInterface, args
 	newTransactionInfo.Status = args[3]
 	newTransactionInfo.Description = args[4]
 
+	assetBytes, err := stub.GetState(args[0])
+	if err != nil || len(assetBytes) != 0 {
+
+		// This is an update scenario
+		err = json.Unmarshal(assetBytes, &oldTransactionInfo)
+		if err != nil {
+			err = errors.New("Unable to unmarshal JSON data from stub")
+			return nil, err
+			// state is an empty instance of asset state
+		}
+		// Merge partial state updates
+		newTransactionInfo, err = t.mergePartialState(oldTransactionInfo, newTransactionInfo)
+		if err != nil {
+			err = errors.New("Unable to merge state")
+			return nil, err
+		}
+
+	}
+
 	b, err = json.Marshal(newTransactionInfo)
 	if err != nil {
 		fmt.Println(err)
 		return nil, errors.New("Errors while creating json string for newTransactionInfo")
 	}
 
-	err = stub.PutState(args[1], b)
+	err = stub.PutState(args[0], b)
 	if err != nil {
 		return nil, err
 	}
 
 	return nil, nil
+}
+
+func (t *SimpleChaincode) mergePartialState(oldState TransactionInfo, newState TransactionInfo) (TransactionInfo, error) {
+
+	old := reflect.ValueOf(&oldState).Elem()
+	new := reflect.ValueOf(&newState).Elem()
+	for i := 0; i < old.NumField(); i++ {
+		oldOne := old.Field(i)
+		newOne := new.Field(i)
+		if !reflect.ValueOf(newOne.Interface()).IsNil() {
+			oldOne.Set(reflect.Value(newOne))
+		}
+	}
+	return oldState, nil
 }
