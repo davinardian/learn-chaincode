@@ -462,7 +462,7 @@ func (t *SimpleChaincode) InitTransaction(stub shim.ChaincodeStubInterface, args
 			// state is an empty instance of asset state
 		}
 		// Merge partial state updates
-		newTransactionInfo, err = t.mergePartialState(oldTransactionInfo, newTransactionInfo)
+		oldTransactionInfo, err = t.mergePartialState(oldTransactionInfo, newTransactionInfo)
 		if err != nil {
 			err = errors.New("Unable to merge state")
 			return nil, err
@@ -470,7 +470,7 @@ func (t *SimpleChaincode) InitTransaction(stub shim.ChaincodeStubInterface, args
 
 	}
 
-	b, err = json.Marshal(newTransactionInfo)
+	b, err = json.Marshal(oldTransactionInfo)
 	if err != nil {
 		fmt.Println(err)
 		return nil, errors.New("Errors while creating json string for newTransactionInfo")
