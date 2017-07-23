@@ -111,8 +111,6 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 		return nil, errors.New("Incorrect number of arguments. Expecting 4")
 	}
 
-	b := []byte(args[0])
-
 	var newDeliveryInfo DeliveryInfo
 	newDeliveryInfo.PackageId = args[0]
 	newDeliveryInfo.From = args[1]
@@ -122,7 +120,7 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 	newDeliveryInfo.Carrier = args[5]
 	newDeliveryInfo.Status = args[6]
 
-	b, err = json.Marshal(newDeliveryInfo)
+	b, err := json.Marshal(newDeliveryInfo)
 	if err != nil {
 		fmt.Println(err)
 		return nil, errors.New("Errors while creating json string for newDeliveryInfo")
