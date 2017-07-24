@@ -111,11 +111,6 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 		return nil, errors.New("Incorrect number of arguments. Expecting 4")
 	}
 
-	Cvalbytes, err := stub.GetState(args[0])
-	if err != nil {
-		return nil, errors.New("Failed to get state")
-	}
-
 	var newDeliveryInfo DeliveryInfo
 	newDeliveryInfo.PackageId = args[0]
 	newDeliveryInfo.From = args[1]
@@ -124,11 +119,6 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 	newDeliveryInfo.MaxTemp = args[4]
 	newDeliveryInfo.Carrier = args[5]
 	newDeliveryInfo.Status = args[6]
-
-	err = json.Unmarshal(Cvalbytes, &newDeliveryInfo)
-	if err != nil {
-		return nil, errors.New("Failed to marshal string to struct of newTransactionInfo")
-	}
 
 	b, err := json.Marshal(newDeliveryInfo)
 	if err != nil {
