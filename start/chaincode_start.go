@@ -39,6 +39,11 @@ type DeliveryInfo struct {
 	Status      string `json:"status"`
 }
 
+type HistoryDelivery struct {
+	HistoryDeliveryId string         `json:"historyDeliveryId"`
+	ListDelivery      []DeliveryInfo `json:"listDelivery"`
+}
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -131,19 +136,36 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 		return nil, err
 	}
 
+	//add to history delvery
 	bufferIdHistoryDeliveryPackage.WriteString("history_delivery_")
 	bufferIdHistoryDeliveryPackage.WriteString(args[0])
+
+	var historyDelivery HistoryDelivery
+	historyDelivery.HistoryDeliveryId = bufferIdHistoryDeliveryPackage.String()
+	listHistoryDeliveryPackage = []DeliveryInfo{
+		{
+			PackageId:   args[0],
+			From:        args[1],
+			Destination: args[2],
+			MinTemp:     args[3],
+			MaxTemp:     args[4],
+			Carrier:     args[5],
+			Status:      args[6],
+		},
+	}
+
 	historyDeliveryPackageArray, err := stub.GetState(bufferIdHistoryDeliveryPackage.String())
 	if err != nil || len(historyDeliveryPackageArray) != 0 {
-		listHistoryDeliveryPackage = append(listHistoryDeliveryPackage, newDeliveryInfo)
 
-		b, err = json.Marshal(listHistoryDeliveryPackage)
+		historyDelivery.ListDelivery = listHistoryDeliveryPackage
+
+		c, err := json.Marshal(historyDelivery)
 		if err != nil {
 			fmt.Println(err)
 			return nil, errors.New("Errors while creating json string for participanttwo")
 		}
 
-		err = stub.PutState(bufferIdHistoryDeliveryPackage.String(), b)
+		err = stub.PutState(bufferIdHistoryDeliveryPackage.String(), c)
 		if err != nil {
 			return nil, err
 		}
@@ -153,20 +175,24 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 			return nil, err
 		}
 
-		err = json.Unmarshal(listHistoryDeliveryPackageTemp, &listHistoryDeliveryPackage)
+		var newHistoryDeliveryPackageArray []DeliveryInfo
+
+		err = json.Unmarshal(listHistoryDeliveryPackageTemp, &newHistoryDeliveryPackageArray)
+
 		if err != nil {
 			return nil, err
 		}
 
-		listHistoryDeliveryPackage = append(listHistoryDeliveryPackage, newDeliveryInfo)
+		historyDelivery.ListDelivery = newHistoryDeliveryPackageArray
+		historyDelivery.ListDelivery = append(historyDelivery.ListDelivery, newDeliveryInfo)
 
-		b, err := json.Marshal(listHistoryDeliveryPackage)
+		d, err := json.Marshal(historyDelivery)
 		if err != nil {
 			fmt.Println(err)
 			return nil, errors.New("Errors while creating json string for participanttwo")
 		}
 
-		err = stub.PutState(bufferIdHistoryDeliveryPackage.String(), b)
+		err = stub.PutState(bufferIdHistoryDeliveryPackage.String(), d)
 		if err != nil {
 			return nil, err
 		}
