@@ -163,15 +163,13 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 		}
 
 		var newHistoryDeliveryPackageArray []DeliveryInfo
-
 		err = json.Unmarshal(listHistoryDeliveryPackageTemp, &newHistoryDeliveryPackageArray)
-
 		if err != nil {
 			return nil, err
 		}
 
+		newHistoryDeliveryPackageArray = append(newHistoryDeliveryPackageArray, newDeliveryInfo)
 		historyDelivery.ListDelivery = newHistoryDeliveryPackageArray
-		historyDelivery.ListDelivery = append(historyDelivery.ListDelivery, newDeliveryInfo)
 
 		d, err := json.Marshal(historyDelivery)
 		if err != nil {
