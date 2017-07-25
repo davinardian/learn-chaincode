@@ -39,11 +39,6 @@ type DeliveryInfo struct {
 	Status      string `json:"status"`
 }
 
-type HistoryDelivery struct {
-	HistoryDeliveryId string         `json:"historyDeliveryId"`
-	ListDelivery      []DeliveryInfo `json:"listDelivery"`
-}
-
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -140,20 +135,6 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 	bufferIdHistoryDeliveryPackage.WriteString("history_delivery_")
 	bufferIdHistoryDeliveryPackage.WriteString(args[0])
 
-	var historyDelivery HistoryDelivery
-	historyDelivery.HistoryDeliveryId = bufferIdHistoryDeliveryPackage.String()
-	listHistoryDeliveryPackage = []DeliveryInfo{
-		{
-			PackageId:   args[0],
-			From:        args[1],
-			Destination: args[2],
-			MinTemp:     args[3],
-			MaxTemp:     args[4],
-			Carrier:     args[5],
-			Status:      args[6],
-		},
-	}
-
 	historyDeliveryPackageArray, err := stub.GetState(bufferIdHistoryDeliveryPackage.String())
 	if err != nil || len(historyDeliveryPackageArray) != 0 {
 
@@ -169,9 +150,8 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 		}
 
 		newHistoryDeliveryPackageArray = append(newHistoryDeliveryPackageArray, newDeliveryInfo)
-		historyDelivery.ListDelivery = newHistoryDeliveryPackageArray
 
-		d, err := json.Marshal(historyDelivery)
+		d, err := json.Marshal(newHistoryDeliveryPackageArray)
 		if err != nil {
 			fmt.Println(err)
 			return nil, errors.New("Errors while creating json string for participanttwo")
@@ -184,9 +164,19 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 
 	} else {
 
-		historyDelivery.ListDelivery = listHistoryDeliveryPackage
+		listHistoryDeliveryPackage = []DeliveryInfo{
+			{
+				PackageId:   args[0],
+				From:        args[1],
+				Destination: args[2],
+				MinTemp:     args[3],
+				MaxTemp:     args[4],
+				Carrier:     args[5],
+				Status:      args[6],
+			},
+		}
 
-		c, err := json.Marshal(historyDelivery)
+		c, err := json.Marshal(listHistoryDeliveryPackage)
 		if err != nil {
 			fmt.Println(err)
 			return nil, errors.New("Errors while creating json string for participanttwo")
