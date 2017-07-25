@@ -157,19 +157,6 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 	historyDeliveryPackageArray, err := stub.GetState(bufferIdHistoryDeliveryPackage.String())
 	if err != nil || len(historyDeliveryPackageArray) != 0 {
 
-		historyDelivery.ListDelivery = listHistoryDeliveryPackage
-
-		c, err := json.Marshal(historyDelivery)
-		if err != nil {
-			fmt.Println(err)
-			return nil, errors.New("Errors while creating json string for participanttwo")
-		}
-
-		err = stub.PutState(bufferIdHistoryDeliveryPackage.String(), c)
-		if err != nil {
-			return nil, err
-		}
-	} else {
 		listHistoryDeliveryPackageTemp, err := stub.GetState(bufferIdHistoryDeliveryPackage.String())
 		if err != nil {
 			return nil, err
@@ -193,6 +180,21 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 		}
 
 		err = stub.PutState(bufferIdHistoryDeliveryPackage.String(), d)
+		if err != nil {
+			return nil, err
+		}
+
+	} else {
+
+		historyDelivery.ListDelivery = listHistoryDeliveryPackage
+
+		c, err := json.Marshal(historyDelivery)
+		if err != nil {
+			fmt.Println(err)
+			return nil, errors.New("Errors while creating json string for participanttwo")
+		}
+
+		err = stub.PutState(bufferIdHistoryDeliveryPackage.String(), c)
 		if err != nil {
 			return nil, err
 		}
