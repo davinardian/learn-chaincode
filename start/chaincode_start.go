@@ -186,6 +186,13 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 		if err != nil {
 			return nil, err
 		}
+
+		stateJSON1 := []byte(args[0])
+		err = stub.PutState("lastId", stateJSON1)
+		if err != nil {
+			return nil, err
+		}
+
 	}
 
 	return nil, nil
