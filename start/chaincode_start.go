@@ -37,6 +37,7 @@ type DeliveryInfo struct {
 	MaxTemp     string `json:"maxTemp"`
 	Carrier     string `json:"carrier"`
 	Status      string `json:"status"`
+	Block       string `json:"block"`
 }
 
 // ============================================================================================================================
@@ -107,7 +108,7 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 	var err error
 	var listHistoryDeliveryPackage []DeliveryInfo
 
-	if len(args) != 7 {
+	if len(args) != 8 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 4")
 	}
 
@@ -119,6 +120,7 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 	newDeliveryInfo.MaxTemp = args[4]
 	newDeliveryInfo.Carrier = args[5]
 	newDeliveryInfo.Status = args[6]
+	newDeliveryInfo.Block = args[7]
 
 	b, err := json.Marshal(newDeliveryInfo)
 	if err != nil {
@@ -173,6 +175,7 @@ func (t *SimpleChaincode) Delivery(stub shim.ChaincodeStubInterface, args []stri
 				MaxTemp:     args[4],
 				Carrier:     args[5],
 				Status:      args[6],
+				Block:       args[7],
 			},
 		}
 
